@@ -28,6 +28,22 @@ class PHKCurl
     }
 
     /**
+     * GET Method
+     */
+    public function get()
+    {
+
+    }
+
+    /**
+     * POST Method
+     */
+    public function post()
+    {
+
+    }
+
+    /**
      * Close
      * Closes cURL handler
      */

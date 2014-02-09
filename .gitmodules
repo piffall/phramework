@@ -1,0 +1,3 @@
+[submodule "libs/phlib"]
+	path = libs/phlib
+	url = https://github.com/piffall/phlib.git

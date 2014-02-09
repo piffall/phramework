@@ -18,27 +18,27 @@ class PHKCurl
     protected $Timeout = 5;
     protected $DataFields = array();    
 
-	/**
-	 * Constructor
-	 * Initializes cURL handler
-	 */
+    /**
+     * Constructor
+     * Initializes cURL handler
+     */
     public function __construct()
     {
         $this->Curl = curl_init();
     }
 
-	/**
-	 * Close
-	 * Closes cURL handler
-	 */
+    /**
+     * Close
+     * Closes cURL handler
+     */
     public function close()
     {
         curl_close($this->Curl);
     }
 
-	/**
-	 * Destructor
-	 */
+    /**
+     * Destructor
+     */
     public function __destruct()
     {
         $this->close();

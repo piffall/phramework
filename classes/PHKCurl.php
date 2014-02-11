@@ -27,6 +27,7 @@ class PHKCurl
     protected $Protocol = self::HTTP_PORT;
     protected $Url = '';
     protected $Port = self::HTTP_PROTOCOL;
+    protected $Method = self::METHOD_GET;
     protected $UserAgent = '';
     protected $Timeout = 5;
     protected $ConnectTimeout = 5;
@@ -58,6 +59,11 @@ class PHKCurl
         $this->Port = (int)$Port;
     }
 
+    public function setMethod($Meth)
+    {
+        $this->Method = $Meth;
+    }
+
     public function setUserAgent($UsAg)
     {
         $this->UserAgent = $UsAg;
@@ -76,9 +82,9 @@ class PHKCurl
     public function setDataFields($Data,$Raw=false)
     {
         if(!$Raw) {
-            $this->Data = self::buildQuery($Data);
+            $this->DataFields = self::buildQuery($Data);
         } else {
-            $this->Data = $Data;
+            $this->DataFields = $Data;
         }
     }
 
@@ -123,39 +129,39 @@ class PHKCurl
 
     public function curlSetOptions()
     {
-        curl_setopt(CURLOPT_RETURNTRANSFER,true);
-        curl_setopt(CURLOPT_URL,$this->Url);    
-        curl_setopt(CURLOPT_USERAGENT,$this->UserAgent);    
-        if($this->Referer===seflf::AUTO_REFERER) {
-            curl_setopt(CURLOPT_AUTOREFERER,true);  
+        curl_setopt($this->Curl,CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($this->Curl,CURLOPT_URL,$this->Url);    
+        curl_setopt($this->Curl,CURLOPT_USERAGENT,$this->UserAgent);    
+        if($this->Referer===self::AUTO_REFERER) {
+            curl_setopt($this->Curl,CURLOPT_AUTOREFERER,true);  
         } else {
-            curl_setopt(CURLOPT_REFERER,$this->Referer);    
+            curl_setopt($this->Curl,CURLOPT_REFERER,$this->Referer);    
         }
-        curl_setopt(CURLOPT_FOLLOWLOCATION,(bool)$this->FollowLocation);
+        curl_setopt($this->Curl,CURLOPT_FOLLOWLOCATION,(bool)$this->FollowLocation);
         switch($this->Method) {
             case self::METHOD_GET:
-                curl_setopt(CURLOPT_PUT,false);
-                curl_setopt(CURLOPT_POST,false);
-                curl_setopt(CURLOPT_HTTPGET,true);
-                if($this->Data){
-                    curl_setopt(CURLOPT_URL,$this->Url.'?'.$this->Data);    
+                curl_setopt($this->Curl,CURLOPT_PUT,false);
+                curl_setopt($this->Curl,CURLOPT_POST,false);
+                curl_setopt($this->Curl,CURLOPT_HTTPGET,true);
+                if($this->DataFields){
+                    curl_setopt($this->Curl,CURLOPT_URL,$this->Url.'?'.$this->DataFields);    
                 }
                 break;
             case self::METHOD_POST:
-                curl_setopt(CURLOPT_PUT,false);
-                curl_setopt(CURLOPT_HTTPGET,false);
-                curl_setopt(CURLOPT_POST,true);
-                curl_setopt(CURLOPT_POSTFIELDS,$this->Data);
+                curl_setopt($this->Curl,CURLOPT_PUT,false);
+                curl_setopt($this->Curl,CURLOPT_HTTPGET,false);
+                curl_setopt($this->Curl,CURLOPT_POST,true);
+                curl_setopt($this->Curl,CURLOPT_POSTFIELDS,$this->DataFields);
                 break;
             case self::METHOD_PUT:
-                curl_setopt(CURLOPT_POST,false);
-                curl_setopt(CURLOPT_HTTPGET,false);
-                curl_setopt(CURLOPT_PUT,true);
+                curl_setopt($this->Curl,CURLOPT_POST,false);
+                curl_setopt($this->Curl,CURLOPT_HTTPGET,false);
+                curl_setopt($this->Curl,CURLOPT_PUT,true);
                 break;
         }
-        curl_setopt(CURLOPT_VERBOSE,(bool)$this->Verbose);
-        curl_setopt(CURLOPT_TIMEOUT,$this->Timeout);
-        curl_setopt(CURLOPT_CONNECTTIMEOUT,$this->ConnectTimeout);
+        curl_setopt($this->Curl,CURLOPT_VERBOSE,(bool)$this->Verbose);
+        curl_setopt($this->Curl,CURLOPT_TIMEOUT,$this->Timeout);
+        curl_setopt($this->Curl,CURLOPT_CONNECTTIMEOUT,$this->ConnectTimeout);
 
     }
 

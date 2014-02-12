@@ -35,9 +35,11 @@ class PHKCurl
     protected $DataFields = array();    
     protected $Referer = self::AUTO_REFERER;
 
-    protected $Info = null;
+    protected $Info = array();
     protected $LastReturn = null;
     protected $LastHeaders = null;
+
+    protected $LastCookies = array();
 
     protected $ErrorNumber = 0;
     protected $ErrorString = 0;
@@ -179,6 +181,19 @@ class PHKCurl
         $this->LastHeaders = substr($response,0,$this->Info['header_size']);
         $this->ErrorNumber = curl_errno($this->Curl);
         $this->ErrorString = curl_error($this->Curl);
+
+        $this->parseCookies();
+    }
+
+    /**
+     * Parse "Set-Cookies:" from response Header
+     */
+    public function parseCookies()
+    {
+        $matches = array();
+        if(preg_match('/Set\-Cookie\:\s*(.*)/',$this->LastHeaders,$matches)) {
+            $this->LastCookies = explode('; ',$matches[1]);
+        }
     }
 
     /**

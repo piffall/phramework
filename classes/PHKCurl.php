@@ -24,9 +24,9 @@ class PHKCurl
 
     protected $Curl = null;
 
-    protected $Protocol = self::HTTP_PORT;
+    protected $Protocol = self::HTTP_PROTOCOL;
     protected $Url = '';
-    protected $Port = self::HTTP_PROTOCOL;
+    protected $Port = self::HTTP_PORT;
     protected $Method = self::METHOD_GET;
     protected $UserAgent = '';
     protected $Timeout = 5;
@@ -37,7 +37,7 @@ class PHKCurl
 
     protected $Info = null;
     protected $LastReturn = null;
-    protected $LastRawHeaders = null;
+    protected $LastHeaders = null;
 
     protected $ErrorNumber = 0;
     protected $ErrorString = 0;
@@ -130,6 +130,7 @@ class PHKCurl
     public function curlSetOptions()
     {
         curl_setopt($this->Curl,CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($this->Curl,CURLOPT_HEADER,true);
         curl_setopt($this->Curl,CURLOPT_URL,$this->Url);    
         curl_setopt($this->Curl,CURLOPT_USERAGENT,$this->UserAgent);    
         if($this->Referer===self::AUTO_REFERER) {
@@ -170,11 +171,14 @@ class PHKCurl
      */
     public function exec()
     {
-        $this->LastReturn = curl_exec($this->Curl);
+        $response = curl_exec($this->Curl);
+        
+        $this->Info = curl_getinfo($this->Curl);
+
+        $this->LastReturn = substr($response,$this->Info['header_size']);
+        $this->LastHeaders = substr($response,0,$this->Info['header_size']);
         $this->ErrorNumber = curl_errno($this->Curl);
         $this->ErrorString = curl_error($this->Curl);
-
-        $this->Info = curl_getinfo($this->Curl);
     }
 
     /**

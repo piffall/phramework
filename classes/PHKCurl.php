@@ -19,6 +19,7 @@ class PHKCurl
 
     const METHOD_POST = 'POST';
     const METHOD_GET = 'GET';
+    const METHOD_PUT = 'PUT';
 
     const AUTO_REFERER = 'AUTO_REFERER';
 
@@ -45,6 +46,8 @@ class PHKCurl
     protected $ErrorString = 0;
 
     protected $Verbose = false;
+
+    /** Setters */
 
     public function setProtocol($Prot)
     {
@@ -73,12 +76,17 @@ class PHKCurl
 
     public function setTimeout($Time)
     {
-        $this->Timeout = $Time;
+        $this->Timeout = (int)$Time;
+    }
+
+    public function setConnectTimeout($CoTi)
+    {
+        $this->ConnectTimeout = (int)$CoTi;
     }
 
     public function setFollowLocation($FoLo)
     {
-        $this->FollowLocation = $FoLo;
+        $this->FollowLocation = (bool)$FoLo;
     }
 
     public function setDataFields($Data,$Raw=false)
@@ -95,10 +103,126 @@ class PHKCurl
         $this->Referer = $Refe;
     }
 
+    public function setInfo($Info)
+    {
+        $this->Info = $Info;
+    }
+
+    public function setLastReturn($LaRe)
+    {
+        $this->LastReturn = $LaRe;
+    }
+
+    public function setLastHeaders($LaHe)
+    {
+        $this->LastHeaders = $LaHe;
+    }
+
+    public function setLastCookies($LaCo)
+    {
+        $this->LastCookies = $LaCo;
+    }
+
+    public function setErrorNumber($ErNo)
+    {
+        $this->ErrorNumber = $ErNo;
+    }
+
+    public function setErrorString($ErSt)
+    {
+        $this->ErrorString = $ErSt;
+    }
+
     public function setVerbose($Verb)
     {
         $this->Verbose = (bool)$Verb;
     }
+
+    /** End of setters */
+
+    /** Getters */
+
+    public function getProtocol()
+    {
+        return $this->Protocol;
+    }
+
+    public function getUrl()
+    {
+        return $this->Url;
+    }
+
+    public function getPort()
+    {
+        return $this->Port;
+    }
+
+    public function getMethod()
+    {
+        return $this->Method;
+    }
+
+    public function getUserAgent()
+    {
+        return $this->UserAgent;
+    }
+
+    public function getTimeout()
+    {
+        return $this->Timeout;
+    }
+
+    public function getConnectTimeout()
+    {
+        return $this->ConnectTimeout;
+    }
+
+    public function getFollowLocation()
+    {
+        return $this->FollowLocation;
+    }
+
+    public function getDataFields()
+    {
+        return $this->DataFields;
+    }
+
+    public function getInfo()
+    {
+        return $this->Info;
+    }
+
+    public function getLastReturn()
+    {
+        return $this->LastReturn;
+    }
+
+    public function getLastHeaders()
+    {
+        return $this->LastHeaders;
+    }
+
+    public function getLastCookies()
+    {
+        return $this->LastCookies;
+    }
+
+    public function getErrorNumber()
+    {
+        return $this->ErrorNumber;
+    }
+
+    public function getErrorString()
+    {
+        return $this->ErrorString;
+    }
+
+    public function getVerbose()
+    {
+        return $this->Verbose;
+    }
+
+    /** End of getters */
 
     /**
      * Constructor
@@ -110,7 +234,8 @@ class PHKCurl
     }
 
     /**
-     * GET Method
+     * HTTP(S) GET Method
+     * Performs a GET against URL
      */
     public function get()
     {
@@ -121,6 +246,7 @@ class PHKCurl
 
     /**
      * POST Method
+     * Performs a POST against URL
      */
     public function post()
     {
@@ -129,32 +255,36 @@ class PHKCurl
         $this->exec();
     }
 
+    /**
+     * Set cURL Options
+     * Setting up cURL session handler using current settings
+     */
     public function curlSetOptions()
     {
         curl_setopt($this->Curl,CURLOPT_RETURNTRANSFER,true);
         curl_setopt($this->Curl,CURLOPT_HEADER,true);
-        curl_setopt($this->Curl,CURLOPT_URL,$this->Url);    
-        curl_setopt($this->Curl,CURLOPT_USERAGENT,$this->UserAgent);    
+        curl_setopt($this->Curl,CURLOPT_URL,$this->getUrl());    
+        curl_setopt($this->Curl,CURLOPT_USERAGENT,$this->getUserAgent());    
         if($this->Referer===self::AUTO_REFERER) {
             curl_setopt($this->Curl,CURLOPT_AUTOREFERER,true);  
         } else {
-            curl_setopt($this->Curl,CURLOPT_REFERER,$this->Referer);    
+            curl_setopt($this->Curl,CURLOPT_REFERER,$this->getReferer());    
         }
-        curl_setopt($this->Curl,CURLOPT_FOLLOWLOCATION,(bool)$this->FollowLocation);
+        curl_setopt($this->Curl,CURLOPT_FOLLOWLOCATION,$this->getFollowLocation());
         switch($this->Method) {
             case self::METHOD_GET:
                 curl_setopt($this->Curl,CURLOPT_PUT,false);
                 curl_setopt($this->Curl,CURLOPT_POST,false);
                 curl_setopt($this->Curl,CURLOPT_HTTPGET,true);
                 if($this->DataFields){
-                    curl_setopt($this->Curl,CURLOPT_URL,$this->Url.'?'.$this->DataFields);    
+                    curl_setopt($this->Curl,CURLOPT_URL,$this->getUrl().'?'.$this->getDataFields());    
                 }
                 break;
             case self::METHOD_POST:
                 curl_setopt($this->Curl,CURLOPT_PUT,false);
                 curl_setopt($this->Curl,CURLOPT_HTTPGET,false);
                 curl_setopt($this->Curl,CURLOPT_POST,true);
-                curl_setopt($this->Curl,CURLOPT_POSTFIELDS,$this->DataFields);
+                curl_setopt($this->Curl,CURLOPT_POSTFIELDS,$this->getDataFields());
                 break;
             case self::METHOD_PUT:
                 curl_setopt($this->Curl,CURLOPT_POST,false);
@@ -162,9 +292,9 @@ class PHKCurl
                 curl_setopt($this->Curl,CURLOPT_PUT,true);
                 break;
         }
-        curl_setopt($this->Curl,CURLOPT_VERBOSE,(bool)$this->Verbose);
-        curl_setopt($this->Curl,CURLOPT_TIMEOUT,$this->Timeout);
-        curl_setopt($this->Curl,CURLOPT_CONNECTTIMEOUT,$this->ConnectTimeout);
+        curl_setopt($this->Curl,CURLOPT_VERBOSE,(bool)$this->getVerbose());
+        curl_setopt($this->Curl,CURLOPT_TIMEOUT,$this->getTimeout());
+        curl_setopt($this->Curl,CURLOPT_CONNECTTIMEOUT,$this->getConnectTimeout());
 
     }
 
@@ -191,8 +321,8 @@ class PHKCurl
     public function parseCookies()
     {
         $matches = array();
-        if(preg_match('/Set\-Cookie\:\s*(.*)/',$this->LastHeaders,$matches)) {
-            $this->LastCookies = explode('; ',$matches[1]);
+        if(preg_match('/Set\-Cookie\:\s*(.*)/',$this->getLastHeaders(),$matches)) {
+            $this->setLastCookies(explode('; ',$matches[1]));
         }
     }
 

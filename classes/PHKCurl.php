@@ -316,6 +316,14 @@ class PHKCurl
     }
 
     /**
+     * Clear data fields.
+     */
+    public function clearDataFields()
+    {
+        $this->setDataFields(array());
+    }
+
+    /**
      * Parse "Set-Cookies:" from response Header
      */
     public function parseCookies()

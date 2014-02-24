@@ -202,9 +202,9 @@ class PHKCurl
         return $this->LastHeaders;
     }
 
-    public function getLastCookies()
+    public function getLastCookies($Stri=0)
     {
-        return $this->LastCookies;
+        return $Stri ? implode('; ',$this->LastCookies) : $this->LastCookies;
     }
 
     public function getErrorNumber()
@@ -276,7 +276,7 @@ class PHKCurl
                 curl_setopt($this->Curl,CURLOPT_PUT,false);
                 curl_setopt($this->Curl,CURLOPT_POST,false);
                 curl_setopt($this->Curl,CURLOPT_HTTPGET,true);
-                if($this->DataFields){
+                if(is_string($this->getDataFields())){
                     curl_setopt($this->Curl,CURLOPT_URL,$this->getUrl().'?'.$this->getDataFields());    
                 }
                 break;
@@ -316,6 +316,14 @@ class PHKCurl
     }
 
     /**
+     * Clear data fields.
+     */
+    public function clearDataFields()
+    {
+        $this->setDataFields(array());
+    }
+
+    /**
      * Parse "Set-Cookies:" from response Header
      */
     public function parseCookies()
@@ -323,6 +331,39 @@ class PHKCurl
         $matches = array();
         if(preg_match('/Set\-Cookie\:\s*(.*)/',$this->getLastHeaders(),$matches)) {
             $this->setLastCookies(explode('; ',$matches[1]));
+        }
+    }
+
+    /**
+     * Set all Cookies found in last return result
+     */
+    public function setFromLastCookies()
+    {
+        curl_setopt($this->Curl,CURLOPT_COOKIE,$this->getLastCookies(1)); 
+    }
+
+    /**
+     * Set custom cookies
+     * @param String $cookies
+     */
+    public function setCustomCookies($Cook)
+    {
+        curl_setopt($this->Curl,CURLOPT_COOKIE,$Cook); 
+    }
+
+    /**
+     * Find cookie by key and return value
+     * @param String key
+     * @return String value
+     */
+    public function getCookieValue($Key)
+    {
+        foreach($this->getLastCookies() as $cookie){
+            $kv = explode('=',$cookie,2);
+            if(count($kv)==2) {
+                return $kv[1];
+            }
+            return '';
         }
     }
 

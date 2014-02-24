@@ -11,4 +11,4 @@
 include_once(dirname(__FILE__).'/classes/PHKLoader.php');
 
 // Lets go!
-PHKLoader::init();
+PHKLoader::registerAutoloader();

@@ -32,7 +32,7 @@ class PHKLoader
     /**
      * Initialize method
      */
-    public static function init()
+    public static function registerAutoloader()
     {
         static::getInstance()->addPackage(__DIR__);
     }

@@ -36,6 +36,9 @@ class PHKCurl
     protected $DataFields = array();    
     protected $Referer = self::AUTO_REFERER;
 
+    protected $Username = null;
+    protected $Password = null;
+
     protected $Info = array();
     protected $LastReturn = null;
     protected $LastHeaders = null;
@@ -101,6 +104,16 @@ class PHKCurl
     public function setReferer($Refe)
     {
         $this->Referer = $Refe;
+    }
+
+    public function setUsername($User)
+    {
+        $this->Username = $User;
+    }
+
+    public function setPassword($Pass)
+    {
+        $this->Password = $Pass;
     }
 
     public function setInfo($Info)
@@ -187,6 +200,21 @@ class PHKCurl
         return $this->DataFields;
     }
 
+    public function getReferer()
+    {
+        return $this->Referer;
+    }
+
+    public function getUsername()
+    {
+        return $this->Username;
+    }
+
+    public function getPassword()
+    {
+        return $this->Password;
+    }
+
     public function getInfo()
     {
         return $this->Info;
@@ -264,7 +292,10 @@ class PHKCurl
         curl_setopt($this->Curl,CURLOPT_RETURNTRANSFER,true);
         curl_setopt($this->Curl,CURLOPT_HEADER,true);
         curl_setopt($this->Curl,CURLOPT_URL,$this->getUrl());    
-        curl_setopt($this->Curl,CURLOPT_USERAGENT,$this->getUserAgent());    
+        curl_setopt($this->Curl,CURLOPT_USERAGENT,$this->getUserAgent());
+        if(!is_null($this->getUsername())||!is_null($this->getPassword())){
+            curl_setopt($this->Curl,CURLOPT_USERPWD,"{$this->getUsername()}:{$this->getPassword()}");    
+        }
         if($this->Referer===self::AUTO_REFERER) {
             curl_setopt($this->Curl,CURLOPT_AUTOREFERER,true);  
         } else {

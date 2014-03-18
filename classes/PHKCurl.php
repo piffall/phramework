@@ -375,11 +375,20 @@ class PHKCurl
 
     /**
      * Set custom cookies
-     * @param String $cookies
+     * @param String $Cook
      */
     public function setCustomCookies($Cook)
     {
         curl_setopt($this->Curl,CURLOPT_COOKIE,$Cook); 
+    }
+
+    /**
+     * Set custom Headers
+     * @param Array $Head
+     */
+    public function setCustomHeaders($Head)
+    {
+        curl_setopt($this->Curl,CURLOPT_HTTPHEADER,$Head); 
     }
 
     /**

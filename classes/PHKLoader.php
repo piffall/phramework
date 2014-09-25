@@ -24,7 +24,7 @@ class PHKLoader
      * Constructor
      * Registers autoload method
      */
-    public function __construct()
+    protected function __construct()
     {
         spl_autoload_register(array($this,'getPackage'));
     }

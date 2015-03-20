@@ -359,9 +359,13 @@ class PHKCurl
      */
     public function parseCookies()
     {
+        $cookies = array();
         $matches = array();
-        if(preg_match('/Set\-Cookie\:\s*(.*)/',$this->getLastHeaders(),$matches)) {
-            $this->setLastCookies(explode('; ',$matches[1]));
+        if(preg_match_all('/Set\-Cookie\:\s*([^\;]*);/',$this->getLastHeaders(),$matches)) {
+            foreach($matches[1] as $match) {
+              $cookies = array_merge($cookies,explode('; ',$match));
+            }
+            $this->setLastCookies($cookies);
         }
     }
 

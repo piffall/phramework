@@ -22,10 +22,33 @@
  */
 
 require dirname(__DIR__) . '/vendor/autoload.php';
+use PHK\Curl as Curl;
 
-$c = new PHK\Curl();
-$c->setUrl('http://google.com');
+// New instance
+$c = new Curl();
+
+// GET
+$c->setUrl('http://yourdomain.net');
 $c->get();
 
-print_r($c->getInfo());
+// POST
+$c->setUrl('http://yourdomain.net/action/');
+$c->setDataFields(array('username'=>'user', 'password'=>'*****'));
+$c->post();
+
+// Result
+$html = $c->getLastReturn();
+
+// Reset Object
+$c->reset();
+
+// POST Multipart
+$c->setUrl('http://yourdomain.net/action/');
+$c->setDataFields(array('username'=>'user', 'password'=>'*****'), true);
+$c->post();
+
+// Errors
+$err_no = $c->getErrorNumber();
+$err_str = $c->getErrorString();
+
 ?>

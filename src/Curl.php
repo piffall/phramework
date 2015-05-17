@@ -8,7 +8,8 @@
 #                                                                        #
 ##########################################################################
 
-class PHKCurl
+namespace PHK;
+class Curl
 {
 
     const HTTP_PROTOCOL = 'http';

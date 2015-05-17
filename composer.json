@@ -1,6 +1,13 @@
 {
 	"name": "piffall/phramework",
 	"description": "Some PHP classes",
+	"license": "GPL",
+	"authors": [
+		{
+			"name" : "Cristòfol Torrens Morell",
+			"email": "piffall@gmail.com"
+		}
+	],
 	"require": {
 		"php": ">=5.4.0"
 	},
